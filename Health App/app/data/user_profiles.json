@@ -1,0 +1,59 @@
+{
+  "demo_user": {
+    "id": "demo_user",
+    "name": "Alex Johnson",
+    "age": 28,
+    "gender": "male",
+    "height_cm": 178,
+    "weight_kg": 75,
+    "goal_weight_kg": 70,
+    "activity_level": "moderate",
+    "health_goal": "weight_loss",
+    "diet_preference": "balanced",
+    "daily_calorie_target": 2000,
+    "water_target_ml": 2500,
+    "protein_target_g": 150,
+    "fiber_target_g": 30,
+    "health_score": 73,
+    "streak_days": 12,
+    "points": 1250,
+    "level": 3,
+    "badges": ["7-Day Streak", "Water Champion", "Protein Pro"],
+    "joined_date": "2026-01-15",
+    "allergies": ["shellfish"],
+    "preferences": ["high-protein", "low-sugar"]
+  },
+  "habits": [
+    {"id": 1, "name": "Drink 8 glasses of water", "icon": "💧", "target": 8, "unit": "glasses", "category": "hydration", "streak": 12, "completed_today": true},
+    {"id": 2, "name": "Eat 5 servings of vegetables", "icon": "🥦", "target": 5, "unit": "servings", "category": "nutrition", "streak": 7, "completed_today": true},
+    {"id": 3, "name": "No sugary drinks", "icon": "🚫", "target": 1, "unit": "day", "category": "nutrition", "streak": 5, "completed_today": false},
+    {"id": 4, "name": "Eat breakfast before 9am", "icon": "🌅", "target": 1, "unit": "day", "category": "timing", "streak": 3, "completed_today": true},
+    {"id": 5, "name": "Mindful eating (no screens)", "icon": "🧘", "target": 1, "unit": "meal", "category": "mindfulness", "streak": 1, "completed_today": false},
+    {"id": 6, "name": "Track all meals", "icon": "📝", "target": 3, "unit": "meals", "category": "tracking", "streak": 12, "completed_today": true}
+  ],
+  "challenges": [
+    {"id": 1, "name": "7-Day Plant Power", "description": "Eat at least one plant-based meal daily for 7 days", "progress": 5, "target": 7, "points": 500, "icon": "🌱", "status": "active"},
+    {"id": 2, "name": "Hydration Hero", "description": "Hit your water goal for 14 consecutive days", "progress": 12, "target": 14, "points": 750, "icon": "💧", "status": "active"},
+    {"id": 3, "name": "Sugar Detox Week", "description": "Zero added sugars for 7 days straight", "progress": 3, "target": 7, "points": 600, "icon": "🚫🍬", "status": "active"},
+    {"id": 4, "name": "Rainbow Eater", "description": "Eat 7 different colored vegetables in one week", "progress": 7, "target": 7, "points": 400, "icon": "🌈", "status": "completed"},
+    {"id": 5, "name": "Protein Power Month", "description": "Hit protein goals for 30 days", "progress": 18, "target": 30, "points": 1000, "icon": "💪", "status": "active"}
+  ],
+  "leaderboard": [
+    {"rank": 1, "name": "Sarah M.", "avatar": "👩‍🦱", "points": 4820, "streak": 34, "badge": "🏆"},
+    {"rank": 2, "name": "Marcus T.", "avatar": "👨🏾‍🦲", "points": 4150, "streak": 28, "badge": "🥈"},
+    {"rank": 3, "name": "Priya K.", "avatar": "👩🏽", "points": 3900, "streak": 21, "badge": "🥉"},
+    {"rank": 4, "name": "Alex J. (You)", "avatar": "😊", "points": 1250, "streak": 12, "badge": "⭐"},
+    {"rank": 5, "name": "Jordan L.", "avatar": "👤", "points": 1100, "streak": 8, "badge": ""},
+    {"rank": 6, "name": "Emma R.", "avatar": "👩", "points": 980, "streak": 6, "badge": ""},
+    {"rank": 7, "name": "Dev P.", "avatar": "👨🏽", "points": 875, "streak": 5, "badge": ""},
+    {"rank": 8, "name": "Olivia W.", "avatar": "👩🏼", "points": 720, "streak": 3, "badge": ""}
+  ],
+  "restaurants": [
+    {"id": 1, "name": "GreenBowl Kitchen", "type": "Healthy Bowls", "rating": 4.8, "distance": "0.3 km", "healthy_options": 95, "price_range": "$$", "tags": ["vegan-friendly", "gluten-free", "organic"], "icon": "🥗"},
+    {"id": 2, "name": "The Protein Lab", "type": "Fitness Food", "rating": 4.6, "distance": "0.7 km", "healthy_options": 90, "price_range": "$$", "tags": ["high-protein", "meal-prep", "macro-friendly"], "icon": "💪"},
+    {"id": 3, "name": "Harvest & Thyme", "type": "Farm-to-Table", "rating": 4.9, "distance": "1.2 km", "healthy_options": 88, "price_range": "$$$", "tags": ["organic", "local", "seasonal"], "icon": "🌾"},
+    {"id": 4, "name": "SmoothieBar Co.", "type": "Juice Bar", "rating": 4.4, "distance": "0.5 km", "healthy_options": 85, "price_range": "$", "tags": ["smoothies", "cold-press", "no-added-sugar"], "icon": "🥤"},
+    {"id": 5, "name": "Nourish Poke", "type": "Poke Bowls", "rating": 4.7, "distance": "0.9 km", "healthy_options": 82, "price_range": "$$", "tags": ["omega-3", "fresh", "customizable"], "icon": "🐟"},
+    {"id": 6, "name": "Terra Plant Cafe", "type": "Vegan Cafe", "rating": 4.5, "distance": "1.5 km", "healthy_options": 100, "price_range": "$$", "tags": ["fully-vegan", "sustainable", "creative"], "icon": "🌿"}
+  ]
+}

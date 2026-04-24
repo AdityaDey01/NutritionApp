@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+{% block title %}AI Food Recommender{% endblock %}
+{% block meta_desc %}Get AI-powered personalized food recommendations based on your goals, mood, and context{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">🤖 AI Food <span class="text-gradient">Recommender</span></h1>
+    <p class="page-desc">Context-aware personalized food recommendations powered by our smart scoring engine</p>
+  </div>
+
+  <div class="grid grid-2" style="gap:2rem;">
+
+    <!-- INPUT PANEL -->
+    <div>
+      <div class="card card-lg fade-up">
+        <div class="section-title mb-3">🎯 Tell Us Your Context</div>
+
+        <div class="form-group">
+          <label class="form-label" for="mealQuery">What do you feel like eating?</label>
+          <input type="text" id="mealQuery" class="form-control" placeholder="e.g. something filling, burger, salad, comfort food..." />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="mealTime">Meal Time</label>
+            <select id="mealTime" class="form-control">
+              <option value="breakfast">🌅 Breakfast</option>
+              <option value="lunch" selected>☀️ Lunch</option>
+              <option value="dinner">🌙 Dinner</option>
+              <option value="snack">🍎 Snack</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dietPref">Diet Preference</label>
+            <select id="dietPref" class="form-control">
+              <option value="any">🍽️ Any</option>
+              <option value="balanced">⚖️ Balanced</option>
+              <option value="vegan">🌱 Vegan</option>
+              <option value="vegetarian">🥗 Vegetarian</option>
+              <option value="keto">🥑 Keto</option>
+              <option value="paleo">🦕 Paleo</option>
+              <option value="high-protein">💪 High Protein</option>
+              <option value="gluten-free">🌾 Gluten-Free</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="healthGoal">Health Goal</label>
+            <select id="healthGoal" class="form-control">
+              <option value="balanced">🎯 Balanced</option>
+              <option value="weight_loss">⚖️ Weight Loss</option>
+              <option value="muscle_gain">💪 Muscle Gain</option>
+              <option value="heart_health">❤️ Heart Health</option>
+              <option value="energy_boost">⚡ Energy Boost</option>
+              <option value="gut_health">🦠 Gut Health</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="budget">Budget</label>
+            <select id="budget" class="form-control">
+              <option value="low">💰 Budget-Friendly</option>
+              <option value="medium" selected>💳 Moderate</option>
+              <option value="high">💎 Premium</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="stressLevel">Stress Level</label>
+            <select id="stressLevel" class="form-control">
+              <option value="low">😌 Relaxed</option>
+              <option value="normal" selected>😊 Normal</option>
+              <option value="high">😤 Stressed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Workout Day?</label>
+            <div class="flex gap-2 mt-1" style="align-items:center;height:44px;">
+              <button class="toggle" id="workoutToggle" onclick="this.classList.toggle('on')" aria-label="Toggle workout day"></button>
+              <span id="workoutLabel" style="font-size:0.9rem;color:var(--text-muted);">Rest day</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg w-full" onclick="getRecommendations()" id="rec-btn">
+          🤖 Get AI Recommendations
+        </button>
+      </div>
+
+      <!-- MOOD SUGGESTIONS -->
+      <div class="card mt-3 fade-up-2">
+        <div class="section-title mb-2">😊 Mood-Based Suggestions</div>
+        <div class="flex gap-1" style="flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="getMoodSuggestions('stressed')" id="mood-stressed">😤 Stressed</button>
+          <button class="btn btn-ghost btn-sm" onclick="getMoodSuggestions('energetic')" id="mood-energetic">⚡ Energetic</button>
+          <button class="btn btn-ghost btn-sm" onclick="getMoodSuggestions('tired')" id="mood-tired">😴 Tired</button>
+          <button class="btn btn-ghost btn-sm" onclick="getMoodSuggestions('happy')" id="mood-happy">😄 Happy</button>
+          <button class="btn btn-ghost btn-sm" onclick="getMoodSuggestions('anxious')" id="mood-anxious">😰 Anxious</button>
+          <button class="btn btn-ghost btn-sm" onclick="getMoodSuggestions('motivated')" id="mood-motivated">🔥 Motivated</button>
+        </div>
+      </div>
+
+      <!-- WEATHER SUGGESTIONS -->
+      <div class="card mt-3 fade-up-3">
+        <div class="section-title mb-2">🌤️ Weather-Based Context</div>
+        <div class="flex gap-1" style="flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="getWeatherSuggestions('hot')" id="weather-hot">☀️ Hot Day</button>
+          <button class="btn btn-ghost btn-sm" onclick="getWeatherSuggestions('cold')" id="weather-cold">❄️ Cold Day</button>
+          <button class="btn btn-ghost btn-sm" onclick="getWeatherSuggestions('rainy')" id="weather-rainy">🌧️ Rainy</button>
+          <button class="btn btn-ghost btn-sm" onclick="getWeatherSuggestions('sunny')" id="weather-sunny">🌤️ Sunny</button>
+        </div>
+        <div id="contextInsight" class="mt-2" style="padding:0.75rem;background:rgba(0,200,150,0.06);border-radius:8px;border:1px solid rgba(0,200,150,0.15);font-size:0.85rem;color:var(--text-muted);display:none;"></div>
+      </div>
+
+      <!-- MEAL SCANNER MOCK -->
+      <div class="card mt-3 fade-up-3" style="border-color:rgba(108,99,255,0.3);">
+        <div class="flex-between mb-2">
+          <div class="section-title">📷 Scan Your Meal <span class="badge badge-purple">AI Mock</span></div>
+        </div>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">Enter a meal name and our AI will identify and score it instantly</p>
+        <div class="flex gap-2">
+          <input type="text" id="scanInput" class="form-control" placeholder="e.g. Pad Thai, Caesar Salad..." />
+          <button class="btn btn-secondary" onclick="scanMeal()" id="scan-btn">🔍 Scan</button>
+        </div>
+        <div id="scanResult" class="mt-2 hidden"></div>
+      </div>
+    </div>
+
+    <!-- RESULTS PANEL -->
+    <div>
+      <div id="loadingState" class="card flex-center hidden" style="height:200px;flex-direction:column;gap:1rem;">
+        <div class="spinner"></div>
+        <div style="color:var(--text-muted);">AI is analyzing your context...</div>
+      </div>
+
+      <div id="resultsPanel" class="hidden">
+        <div class="card mb-3" style="border-color:rgba(0,200,150,0.2);">
+          <div class="flex-between mb-2">
+            <div class="section-title">🎯 AI Recommendations</div>
+            <span id="resultCount" class="badge badge-green"></span>
+          </div>
+          <div id="insightBox" style="padding:0.75rem;background:rgba(0,200,150,0.06);border-radius:8px;border:1px solid rgba(0,200,150,0.15);font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;"></div>
+          <div id="foodResults" style="display:flex;flex-direction:column;gap:1rem;"></div>
+        </div>
+      </div>
+
+      <div id="moodResults" class="hidden">
+        <div class="card mb-3">
+          <div class="section-title mb-3" id="moodTitle"></div>
+          <div id="moodFoods" style="display:flex;flex-direction:column;gap:1rem;"></div>
+        </div>
+      </div>
+
+      <div id="emptyState" class="card flex-center" style="height:300px;flex-direction:column;gap:1rem;text-align:center;">
+        <div style="font-size:3rem;">🤖</div>
+        <div style="font-size:1.1rem;font-weight:700;">Ready to Recommend</div>
+        <div style="color:var(--text-muted);font-size:0.88rem;max-width:250px;">Fill in your context and click "Get AI Recommendations" or pick a mood above</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('workoutToggle').addEventListener('click', function() {
+  document.getElementById('workoutLabel').textContent = this.classList.contains('on') ? '💪 Workout day' : 'Rest day';
+});
+
+async function getRecommendations() {
+  const btn = document.getElementById('rec-btn');
+  btn.disabled = true; btn.textContent = '⏳ Analyzing...';
+  showLoading(true);
+
+  const payload = {
+    meal_query: document.getElementById('mealQuery').value,
+    diet_pref: document.getElementById('dietPref').value,
+    health_goal: document.getElementById('healthGoal').value,
+    budget: document.getElementById('budget').value,
+    meal_time: document.getElementById('mealTime').value,
+    stress_level: document.getElementById('stressLevel').value,
+    workout_day: document.getElementById('workoutToggle').classList.contains('on')
+  };
+
+  try {
+    const res = await fetch('/recommender/search', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    const data = await res.json();
+    renderResults(data);
+  } catch(e) { showToast('⚠️ Error fetching recommendations','error'); }
+
+  showLoading(false);
+  btn.disabled = false; btn.textContent = '🤖 Get AI Recommendations';
+}
+
+function showLoading(show) {
+  document.getElementById('loadingState').classList.toggle('hidden', !show);
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('resultsPanel').classList.add('hidden');
+  document.getElementById('moodResults').classList.add('hidden');
+}
+
+function renderResults(data) {
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('moodResults').classList.add('hidden');
+  document.getElementById('resultsPanel').classList.remove('hidden');
+  document.getElementById('resultCount').textContent = data.recommendations.length + ' matches';
+  document.getElementById('insightBox').textContent = '💡 ' + data.insight;
+  const container = document.getElementById('foodResults');
+  container.innerHTML = data.recommendations.map(f => buildFoodCard(f)).join('');
+}
+
+async function getMoodSuggestions(mood) {
+  const emojis = {stressed:'😤',energetic:'⚡',tired:'😴',happy:'😄',anxious:'😰',motivated:'🔥'};
+  const res = await fetch('/recommender/mood', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mood})});
+  const data = await res.json();
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('resultsPanel').classList.add('hidden');
+  document.getElementById('moodResults').classList.remove('hidden');
+  document.getElementById('moodTitle').textContent = emojis[mood] + ' Foods for your ' + mood + ' mood';
+  document.getElementById('moodFoods').innerHTML = data.suggestions.map(f => buildFoodCard(f)).join('');
+}
+
+async function getWeatherSuggestions(weather) {
+  const icons = {hot:'☀️',cold:'❄️',rainy:'🌧️',sunny:'🌤️'};
+  const res = await fetch('/recommender/weather', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({weather})});
+  const data = await res.json();
+  const insight = document.getElementById('contextInsight');
+  insight.classList.remove('hidden');
+  insight.textContent = icons[weather] + ' Best foods for a ' + weather + ' day: ' + data.suggestions.map(f=>f.name).join(', ');
+  document.getElementById('emptyState').classList.add('hidden');
+  document.getElementById('resultsPanel').classList.add('hidden');
+  document.getElementById('moodResults').classList.remove('hidden');
+  document.getElementById('moodTitle').textContent = icons[weather] + ' Best for ' + weather + ' weather';
+  document.getElementById('moodFoods').innerHTML = data.suggestions.map(f => buildFoodCard(f)).join('');
+}
+
+async function scanMeal() {
+  const name = document.getElementById('scanInput').value.trim();
+  if (!name) return showToast('Enter a meal name first','error');
+  const btn = document.getElementById('scan-btn');
+  btn.textContent = '🔍 Scanning...'; btn.disabled = true;
+  const res = await fetch('/recommender/scan', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal_name:name})});
+  const data = await res.json();
+  const el = document.getElementById('scanResult');
+  el.classList.remove('hidden');
+  el.innerHTML = `<div style="padding:1rem;background:rgba(108,99,255,0.08);border-radius:10px;border:1px solid rgba(108,99,255,0.2);">
+    <div style="font-weight:700;margin-bottom:0.5rem;">🔍 Detected: ${data.detected} → Matched: ${data.matched}</div>
+    <div style="font-size:0.8rem;color:var(--text-muted);">Confidence: ${Math.round(data.confidence*100)}%</div>
+    <div class="nutrition-grid" style="margin-top:0.75rem;">${buildNutGrid(data.nutrition)}</div>
+    ${buildScorePill(data.score)}
+  </div>`;
+  btn.textContent = '🔍 Scan'; btn.disabled = false;
+}
+
+function buildFoodCard(f) {
+  const score = f.smart_score || {score:75,grade:'B',color:'#F5A623'};
+  return `<div class="food-card">
+    <div class="food-card-header">
+      <div><div class="food-name">${f.name}</div><div class="food-cat">${f.category}</div></div>
+      <div style="text-align:right;">
+        <div style="font-size:1.5rem;font-weight:900;color:${score.color};">${score.score}</div>
+        <div style="font-size:0.7rem;color:var(--text-muted);">Smart Score</div>
+      </div>
+    </div>
+    <div class="nutrition-grid">${buildNutGrid(f)}</div>
+    <div class="tags">${(f.tags||[]).slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    <div style="margin-top:0.75rem;display:flex;gap:0.5rem;align-items:center;">
+      ${buildScorePill(score)}
+      <button class="btn btn-ghost btn-sm" onclick="logFood(${JSON.stringify(f).replace(/"/g,'&quot;')})" style="margin-left:auto;">📝 Log Meal</button>
+    </div>
+  </div>`;
+}
+
+function buildNutGrid(f) {
+  return `<div class="nut-item"><div class="nut-val">${f.calories}</div><div class="nut-lbl">Kcal</div></div>
+    <div class="nut-item"><div class="nut-val">${f.protein}g</div><div class="nut-lbl">Protein</div></div>
+    <div class="nut-item"><div class="nut-val">${f.fiber}g</div><div class="nut-lbl">Fiber</div></div>
+    <div class="nut-item"><div class="nut-val">${f.sugar}g</div><div class="nut-lbl">Sugar</div></div>`;
+}
+
+function buildScorePill(s) {
+  return `<span class="score-pill" style="background:${s.color}22;color:${s.color};">Grade ${s.grade}</span>`;
+}
+
+function logFood(food) {
+  fetch('/tracker/log', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal:food})})
+    .then(r=>r.json()).then(d=>showToast(d.message,'success'));
+}
+</script>
+{% endblock %}

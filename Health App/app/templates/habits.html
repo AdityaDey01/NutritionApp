@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}Habit Tracker{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+<div class="container">
+  <div class="page-header flex-between">
+    <div>
+      <h1 class="page-title">🏆 Habit <span class="text-gradient">Builder</span></h1>
+      <p class="page-desc">Build streaks, earn points, complete challenges, beat the leaderboard</p>
+    </div>
+    <div class="flex gap-2">
+      <div class="card card-sm" style="text-align:center;min-width:90px;">
+        <div style="font-size:1.2rem;">🔥</div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--warning);">{{ user.streak_days }}</div>
+        <div style="font-size:0.7rem;color:var(--text-muted);">Day Streak</div>
+      </div>
+      <div class="card card-sm" style="text-align:center;min-width:90px;">
+        <div style="font-size:1.2rem;">⭐</div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--warning);">{{ user.points }}</div>
+        <div style="font-size:0.7rem;color:var(--text-muted);">Points</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs fade-up">
+    <button class="tab-btn active" onclick="switchTab('habits', this)" id="tab-habits">🎯 Daily Habits</button>
+    <button class="tab-btn" onclick="switchTab('challenges', this)" id="tab-challenges">🏆 Challenges</button>
+    <button class="tab-btn" onclick="switchTab('leaderboard', this)" id="tab-leaderboard">🥇 Leaderboard</button>
+    <button class="tab-btn" onclick="switchTab('badges', this)" id="tab-badges">🎖️ Badges</button>
+  </div>
+
+  <!-- HABITS TAB -->
+  <div id="tab-habits-content" class="fade-up">
+    <div class="grid grid-2 mb-3">
+      <div class="card" style="background:linear-gradient(135deg,rgba(0,200,150,0.1),rgba(0,200,150,0.02));">
+        <div style="font-size:2.5rem;margin-bottom:0.5rem;">✅</div>
+        <div style="font-size:1.5rem;font-weight:800;">{{ habits|selectattr('completed_today')|list|length }}/{{ habits|length }}</div>
+        <div style="color:var(--text-muted);font-size:0.85rem;">Habits completed today</div>
+        <div class="progress-bar mt-2"><div class="progress-fill" style="width:{{ (habits|selectattr('completed_today')|list|length / habits|length * 100)|int }}%"></div></div>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,rgba(255,217,61,0.1),rgba(255,217,61,0.02));">
+        <div style="font-size:2.5rem;margin-bottom:0.5rem;">🔥</div>
+        <div style="font-size:1.5rem;font-weight:800;color:var(--warning);">{{ user.streak_days }} Days</div>
+        <div style="color:var(--text-muted);font-size:0.85rem;">Current streak · Keep it going!</div>
+        <div class="mt-2"><span class="badge badge-yellow">🎯 Next milestone: 14 days</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.75rem;" id="habitsList">
+      {% for h in habits %}
+      <div class="habit-item {% if h.completed_today %}done{% endif %}" id="habit-{{ h.id }}" onclick="completeHabit({{ h.id }}, this)">
+        <div class="habit-icon">{{ h.icon }}</div>
+        <div class="habit-info">
+          <div class="habit-name">{{ h.name }}</div>
+          <div class="habit-streak">🔥 {{ h.streak }}-day streak · {{ h.category }}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="habit-check {% if h.completed_today %}done{% endif %}">{% if h.completed_today %}✓{% endif %}</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-top:3px;">+50 pts</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="card mt-3" style="text-align:center;border:2px dashed var(--border);background:transparent;cursor:pointer;" onclick="showToast('🚧 Custom habit builder coming soon!','success')">
+      <div style="font-size:2rem;margin-bottom:0.5rem;">➕</div>
+      <div style="font-weight:600;">Add Custom Habit</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);">Build your own healthy micro-habit</div>
+    </div>
+  </div>
+
+  <!-- CHALLENGES TAB -->
+  <div id="tab-challenges-content" class="hidden fade-up">
+    <div class="grid grid-auto">
+      {% for ch in challenges %}
+      <div class="challenge-card {% if ch.status == 'completed' %}card-glow{% endif %}" style="{% if ch.status == 'completed' %}border-color:rgba(0,200,150,0.4);{% endif %}">
+        <div class="ch-header">
+          <div class="ch-icon">{{ ch.icon }}</div>
+          <div style="flex:1;">
+            <div class="ch-title">{{ ch.name }}</div>
+            <div class="ch-desc">{{ ch.description }}</div>
+          </div>
+          {% if ch.status == 'completed' %}
+          <span class="badge badge-green">✅ Done!</span>
+          {% else %}
+          <span class="badge badge-yellow">+{{ ch.points }}pts</span>
+          {% endif %}
+        </div>
+        <div class="progress-label"><span>Progress</span><span>{{ ch.progress }}/{{ ch.target }}</span></div>
+        <div class="progress-bar"><div class="progress-fill {% if ch.status=='completed' %}{% else %}{% endif %}" style="width:{{ [ch.progress/ch.target*100|int,100]|min }}%;{% if ch.status=='completed' %}background:var(--gradient-main);{% endif %}"></div></div>
+        {% if ch.status != 'completed' %}
+        <button class="btn btn-ghost btn-sm mt-2" onclick="showToast('✅ Progress updated!','success')">Mark Progress +1</button>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- LEADERBOARD TAB -->
+  <div id="tab-leaderboard-content" class="hidden fade-up">
+    <div class="card">
+      <div class="section-title mb-3">🌍 Weekly Global Rankings</div>
+      {% for entry in leaderboard %}
+      <div class="lb-item {% if entry.name == 'Alex J. (You)' %}me{% endif %}">
+        <div class="lb-rank" style="{% if entry.rank == 1 %}color:var(--warning);font-size:1.1rem;{% endif %}">
+          {% if entry.rank == 1 %}🥇{% elif entry.rank == 2 %}🥈{% elif entry.rank == 3 %}🥉{% else %}{{ entry.rank }}{% endif %}
+        </div>
+        <div class="lb-avatar" style="font-size:1.6rem;">{{ entry.avatar }}</div>
+        <div class="lb-name">{{ entry.name }}</div>
+        <div style="text-align:right;">
+          <div class="lb-pts">{{ "{:,}".format(entry.points) }} pts</div>
+          <div class="lb-streak">🔥 {{ entry.streak }} days</div>
+        </div>
+        {% if entry.badge %}<span style="font-size:1.5rem;">{{ entry.badge }}</span>{% endif %}
+      </div>
+      {% if not loop.last %}<div class="divider" style="margin:0;"></div>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- BADGES TAB -->
+  <div id="tab-badges-content" class="hidden fade-up">
+    <div class="grid grid-4">
+      {% for badge in user.badges %}
+      <div class="card" style="text-align:center;border-color:rgba(0,200,150,0.3);">
+        <div style="font-size:2.5rem;margin-bottom:0.5rem;">🎖️</div>
+        <div style="font-weight:700;font-size:0.95rem;">{{ badge }}</div>
+        <div style="font-size:0.75rem;color:var(--primary);margin-top:4px;">Earned ✓</div>
+      </div>
+      {% endfor %}
+      <div class="card" style="text-align:center;opacity:0.4;border:2px dashed var(--border);background:transparent;">
+        <div style="font-size:2.5rem;margin-bottom:0.5rem;">🔒</div>
+        <div style="font-weight:700;font-size:0.95rem;">30-Day Legend</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">18 days to go</div>
+      </div>
+      <div class="card" style="text-align:center;opacity:0.4;border:2px dashed var(--border);background:transparent;">
+        <div style="font-size:2.5rem;margin-bottom:0.5rem;">🔒</div>
+        <div style="font-weight:700;font-size:0.95rem;">Sugar-Free Week</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">4 days to go</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchTab(name, btn) {
+  ['habits','challenges','leaderboard','badges'].forEach(t => {
+    document.getElementById('tab-'+t+'-content').classList.add('hidden');
+    document.getElementById('tab-'+t).classList.remove('active');
+  });
+  document.getElementById('tab-'+name+'-content').classList.remove('hidden');
+  btn.classList.add('active');
+}
+function completeHabit(id, el) {
+  el.classList.toggle('done');
+  const check = el.querySelector('.habit-check');
+  check.classList.toggle('done');
+  check.textContent = check.classList.contains('done') ? '✓' : '';
+  if (check.classList.contains('done')) {
+    fetch('/habits/complete', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({habit_id:id})})
+      .then(r=>r.json()).then(d=>showToast(d.message,'success'));
+  }
+}
+</script>
+{% endblock %}

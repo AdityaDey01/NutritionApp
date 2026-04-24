@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>NutriSmart AI — Intelligent Food & Health Assistant</title>
+  <meta name="description" content="AI-powered nutrition guidance that helps you make smarter food choices, track habits, and build healthier eating patterns."/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>"/>
+</head>
+<body class="landing-body">
+
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <div class="logo-icon">🥗</div>
+    <span>NutriSmart</span><span style="color:var(--text);-webkit-text-fill-color:var(--text);"> AI</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features" id="land-features">Features</a>
+    <a href="#how-it-works" id="land-how">How It Works</a>
+    <a href="#stats" id="land-stats">Impact</a>
+    <a href="/dashboard" class="nav-cta" id="land-cta">🚀 Launch App</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-bg-glow2"></div>
+  <div class="container hero-content">
+    <div class="hero-badge fade-up">
+      <span class="pulse" style="color:var(--primary)">●</span> AI-Powered Nutrition Intelligence
+    </div>
+    <h1 class="hero-title fade-up-2">
+      Eat Smarter.<br/>
+      <span class="text-gradient">Live Better.</span>
+    </h1>
+    <p class="hero-desc fade-up-3">
+      NutriSmart AI is your intelligent food companion — combining AI personalization,
+      behavioral insights, and nutrition science to help you build lasting healthy habits.
+    </p>
+    <div class="hero-ctas fade-up-3">
+      <a href="/dashboard" class="btn btn-primary btn-lg" id="hero-start">🚀 Start Free — No Sign Up</a>
+      <a href="#features" class="btn btn-ghost btn-lg" id="hero-features">✨ Explore Features</a>
+    </div>
+    <div class="hero-stats fade-up-3">
+      <div class="h-stat"><span class="h-stat-val">10K+</span><span class="h-stat-lbl">Food Items Scored</span></div>
+      <div class="h-stat-divider"></div>
+      <div class="h-stat"><span class="h-stat-val">94%</span><span class="h-stat-lbl">Improved Eating Habits</span></div>
+      <div class="h-stat-divider"></div>
+      <div class="h-stat"><span class="h-stat-val">7 Modules</span><span class="h-stat-lbl">AI-Powered Features</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE CARDS -->
+<section class="section" id="features">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:3rem;">
+      <div class="badge badge-green mb-2">✨ Core Features</div>
+      <h2 style="font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:800;">Everything You Need to<br/><span class="text-gradient">Eat Like an Expert</span></h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="feature-card fade-up">
+        <div class="feat-icon">📊</div>
+        <h3>Smart Dashboard</h3>
+        <p>Real-time nutrition overview, calorie balance, water tracking, health score, and habit streaks — all in one glance.</p>
+        <a href="/dashboard" class="feat-link" id="feat-dashboard">Open Dashboard →</a>
+      </div>
+      <div class="feature-card fade-up-2">
+        <div class="feat-icon">🤖</div>
+        <h3>AI Food Recommender</h3>
+        <p>Tell us what you want to eat, your goal, budget, and context — get hyper-personalized healthier alternatives instantly.</p>
+        <a href="/recommender" class="feat-link" id="feat-recommender">Try Recommender →</a>
+      </div>
+      <div class="feature-card fade-up-3">
+        <div class="feat-icon">🏆</div>
+        <h3>Habit Builder + Gamification</h3>
+        <p>Build streaks, earn badges, compete on leaderboards, and complete health challenges designed by nutrition experts.</p>
+        <a href="/habits" class="feat-link" id="feat-habits">Build Habits →</a>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feat-icon">📝</div>
+        <h3>Food Journal + Insights</h3>
+        <p>Log meals effortlessly, discover behavioral patterns, and get weekly AI-powered insights on your eating trends.</p>
+        <a href="/tracker" class="feat-link" id="feat-tracker">Start Tracking →</a>
+      </div>
+      <div class="feature-card fade-up-2">
+        <div class="feat-icon">🛒</div>
+        <h3>Smart Grocery Planner</h3>
+        <p>AI-generated weekly meal plans, budget-optimized shopping lists, and meal prep ideas tailored to your diet.</p>
+        <a href="/grocery" class="feat-link" id="feat-grocery">Plan Meals →</a>
+      </div>
+      <div class="feature-card fade-up-3">
+        <div class="feat-icon">🧠</div>
+        <h3>AI Nutrition Coach</h3>
+        <p>Chat with your personal AI coach for real-time nutrition guidance, meal advice, and motivation 24/7.</p>
+        <a href="/coach" class="feat-link" id="feat-coach">Chat Now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works" style="background:rgba(255,255,255,0.015);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:3rem;">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;">How <span class="text-gradient">NutriSmart</span> Works</h2>
+    </div>
+    <div class="grid grid-4">
+      <div class="how-step">
+        <div class="step-num">01</div>
+        <div class="step-icon">🎯</div>
+        <h4>Set Your Goal</h4>
+        <p>Tell us your health goal — weight loss, muscle gain, gut health, or energy boost.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">02</div>
+        <div class="step-icon">🤖</div>
+        <h4>AI Personalizes</h4>
+        <p>Our engine scores every food, maps your preferences, and builds a contextual plan.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">03</div>
+        <div class="step-icon">📊</div>
+        <h4>Track & Learn</h4>
+        <p>Log meals, build habits, and our AI learns your patterns to improve recommendations.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">04</div>
+        <div class="step-icon">🏆</div>
+        <h4>Achieve & Grow</h4>
+        <p>Hit milestones, earn rewards, and build lifelong healthy eating habits.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT STATS -->
+<section class="section" id="stats">
+  <div class="container" style="text-align:center;">
+    <div class="badge badge-purple mb-2">📈 Impact</div>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;margin-bottom:3rem;">Built to <span class="text-gradient">Win</span></h2>
+    <div class="grid grid-4">
+      <div class="impact-stat"><div class="impact-val">25+</div><div class="impact-lbl">AI Food Scores</div></div>
+      <div class="impact-stat"><div class="impact-val">9</div><div class="impact-lbl">App Modules</div></div>
+      <div class="impact-stat"><div class="impact-val">7</div><div class="impact-lbl">Diet Plans</div></div>
+      <div class="impact-stat"><div class="impact-val">∞</div><div class="impact-lbl">Personalization</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="section" style="text-align:center;padding:4rem 0;">
+  <div class="container">
+    <div class="hero-bg-glow" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+    <h2 style="font-family:'Outfit',sans-serif;font-size:2.5rem;font-weight:800;margin-bottom:1rem;">Start Eating Smarter <span class="text-gradient">Today</span></h2>
+    <p style="color:var(--text-muted);margin-bottom:2rem;font-size:1.1rem;">No signup required. Your AI nutrition journey begins now.</p>
+    <a href="/dashboard" class="btn btn-primary btn-lg glow-anim" id="final-cta">🚀 Launch NutriSmart AI Free</a>
+  </div>
+</section>
+
+<footer style="text-align:center;padding:2rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:0.82rem;">
+  © 2026 NutriSmart AI — Built with ❤️ for healthier lives | Hackathon Edition
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

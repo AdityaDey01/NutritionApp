@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Insights{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">💡 Weekly <span class="text-gradient">Insights</span></h1>
+    <p class="page-desc">AI-powered behavioral analytics, trends, and healthy restaurant finder</p>
+  </div>
+
+  <!-- INSIGHT CARDS -->
+  <div class="grid grid-4 mb-3 fade-up">
+    <div class="card stat-card card-glow">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-label">Avg Daily Calories</div>
+      <div class="stat-value text-gradient">{{ insights.avg_calories }}</div>
+      <div class="stat-sub">Goal: {{ user.daily_calorie_target }}</div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon">💪</div>
+      <div class="stat-label">Avg Protein</div>
+      <div class="stat-value" style="color:var(--secondary);">{{ insights.avg_protein }}g</div>
+      <div class="stat-sub">Goal: {{ user.protein_target_g }}g</div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon">💧</div>
+      <div class="stat-label">Avg Water</div>
+      <div class="stat-value" style="color:#42C8FF;">{{ insights.avg_water }}</div>
+      <div class="stat-sub">glasses per day</div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-label">Avg Health Score</div>
+      <div class="stat-value" style="color:var(--primary);">{{ insights.avg_health_score }}</div>
+      <div class="stat-sub">out of 100</div>
+    </div>
+  </div>
+
+  <!-- TREND + CHART AREA -->
+  <div class="grid grid-2 mb-3 fade-up-2">
+    <div class="card">
+      <div class="section-title mb-3">📈 Weekly Health Score Trend</div>
+      <div style="position: relative; height: 180px; width: 100%;">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title mb-3">🍽️ Calorie Distribution</div>
+      <div style="position: relative; height: 180px; width: 100%;">
+        <canvas id="calChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEHAVIORAL INSIGHTS -->
+  <div class="card mb-3 fade-up-3">
+    <div class="section-title mb-3">🧠 AI Behavioral Insights</div>
+    <div class="grid grid-3">
+      <div style="padding:1rem;background:rgba(0,200,150,0.06);border-radius:10px;border:1px solid rgba(0,200,150,0.15);">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem;">📊</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">Best Day: {{ insights.best_day }}</div>
+        <div style="font-size:0.82rem;color:var(--text-muted);">You ate the healthiest on {{ insights.best_day }}. Try to replicate those food choices!</div>
+      </div>
+      <div style="padding:1rem;background:rgba(255,107,107,0.06);border-radius:10px;border:1px solid rgba(255,107,107,0.15);">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem;">⚠️</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">Watch Out: {{ insights.worst_day }}</div>
+        <div style="font-size:0.82rem;color:var(--text-muted);">{{ insights.worst_day }} had the lowest health score. Plan better meals for that day.</div>
+      </div>
+      <div style="padding:1rem;background:rgba(108,99,255,0.06);border-radius:10px;border:1px solid rgba(108,99,255,0.15);">
+        <div style="font-size:1.5rem;margin-bottom:0.5rem;">{% if insights.trend == 'improving' %}📈{% else %}📉{% endif %}</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">Trend: {{ insights.trend.title() }}</div>
+        <div style="font-size:0.82rem;color:var(--text-muted);">
+          {% if insights.trend == 'improving' %}Your eating habits are getting better week over week! Keep it up.{% else %}Your scores have dipped. Try adding more vegetables and cutting sugar.{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTHY RESTAURANTS -->
+  <div class="card fade-up">
+    <div class="section-header">
+      <div><div class="section-title">🗺️ Healthy Restaurant Finder</div><div class="section-sub">Top-rated healthy options near you</div></div>
+      <span class="badge badge-green">Near You</span>
+    </div>
+    <div class="grid grid-auto">
+      {% for r in restaurants %}
+      <div class="card card-sm" style="cursor:pointer;" onclick="showToast('📍 Opening {{ r.name }} directions...','success')">
+        <div class="flex-between mb-1">
+          <div style="font-size:2rem;">{{ r.icon }}</div>
+          <div style="text-align:right;">
+            <div style="font-size:0.85rem;font-weight:700;color:var(--warning);">⭐ {{ r.rating }}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">{{ r.distance }}</div>
+          </div>
+        </div>
+        <div style="font-weight:700;font-size:0.9rem;">{{ r.name }}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem;">{{ r.type }} · {{ r.price_range }}</div>
+        <div style="font-size:0.75rem;color:var(--primary);">{{ r.healthy_options }}% healthy options</div>
+        <div class="progress-bar mt-1" style="height:4px;"><div class="progress-fill" style="width:{{ r.healthy_options }}%;"></div></div>
+        <div class="tags">{% for t in r.tags %}<span class="tag">{{ t }}</span>{% endfor %}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { labels: { color: '#7B8AAB', font: { family: 'Inter' } } } },
+  scales: {
+    x: { ticks: { color: '#7B8AAB' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+    y: { ticks: { color: '#7B8AAB' }, grid: { color: 'rgba(255,255,255,0.04)' } }
+  }
+};
+
+// Trend Chart
+const journalData = {{ journal | tojson }};
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: {
+    labels: journalData.map(d => d.weekday.slice(0,3)),
+    datasets: [{
+      label: 'Health Score',
+      data: journalData.map(d => d.totals.health_score),
+      borderColor: '#00C896', backgroundColor: 'rgba(0,200,150,0.1)',
+      tension: 0.4, fill: true, pointBackgroundColor: '#00C896', pointRadius: 5
+    }]
+  },
+  options: { ...chartDefaults, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, min: 0, max: 100 } } }
+});
+
+// Calorie Chart
+new Chart(document.getElementById('calChart'), {
+  type: 'bar',
+  data: {
+    labels: journalData.map(d => d.weekday.slice(0,3)),
+    datasets: [{
+      label: 'Calories',
+      data: journalData.map(d => d.totals.calories),
+      backgroundColor: journalData.map(d => d.totals.calories > 2000 ? 'rgba(255,107,107,0.6)' : 'rgba(0,200,150,0.6)'),
+      borderRadius: 8
+    }]
+  },
+  options: chartDefaults
+});
+</script>
+{% endblock %}

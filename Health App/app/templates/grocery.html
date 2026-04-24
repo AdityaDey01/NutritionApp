@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Smart Grocery Planner{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+<div class="container">
+  <div class="page-header flex-between">
+    <div>
+      <h1 class="page-title">🛒 Smart Grocery <span class="text-gradient">Planner</span></h1>
+      <p class="page-desc">AI-generated weekly meal plans with budget-optimized shopping lists</p>
+    </div>
+  </div>
+
+  <!-- DIET SELECTOR -->
+  <div class="card mb-3 fade-up">
+    <div class="section-title mb-2">Choose Your Plan</div>
+    <div class="flex gap-2" style="flex-wrap:wrap;">
+      <a href="/grocery?diet=balanced" class="btn {% if selected_diet=='balanced' %}btn-primary{% else %}btn-ghost{% endif %}" id="diet-balanced">⚖️ Balanced</a>
+      <a href="/grocery?diet=vegan" class="btn {% if selected_diet=='vegan' %}btn-primary{% else %}btn-ghost{% endif %}" id="diet-vegan">🌱 Plant-Based</a>
+      <a href="/grocery?diet=keto" class="btn {% if selected_diet=='keto' %}btn-primary{% else %}btn-ghost{% endif %}" id="diet-keto">🥑 Keto</a>
+    </div>
+  </div>
+
+  <div class="grid grid-2 fade-up-2" style="align-items:start;">
+
+    <!-- MEAL PLAN -->
+    <div class="card">
+      <div class="flex-between mb-3">
+        <div>
+          <div class="section-title">📅 {{ meal_plan.name }}</div>
+          <div class="section-sub">{{ meal_plan.description }}</div>
+        </div>
+        <span class="badge badge-green">7 Days</span>
+      </div>
+      {% set days_of_week = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'] %}
+      {% for day in meal_plan.days %}
+      <div style="padding:0.9rem;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid var(--border);margin-bottom:0.6rem;">
+        <div style="font-weight:700;font-size:0.85rem;color:var(--primary);margin-bottom:0.5rem;">{{ days_of_week[loop.index0] }}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;font-size:0.78rem;">
+          <div><span style="color:var(--text-muted);">🌅 </span>{{ day.breakfast }}</div>
+          <div><span style="color:var(--text-muted);">☀️ </span>{{ day.lunch }}</div>
+          <div><span style="color:var(--text-muted);">🌙 </span>{{ day.dinner }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- GROCERY LIST -->
+    <div>
+      <div class="card mb-3">
+        <div class="flex-between mb-3">
+          <div>
+            <div class="section-title">🛒 Shopping List</div>
+            <div class="section-sub">Estimated: {{ grocery_list.estimated_cost }}</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="showToast('📋 List copied to clipboard!','success')" id="copy-list-btn">📋 Copy</button>
+        </div>
+
+        <div class="mb-3">
+          <div style="font-size:0.8rem;font-weight:700;color:var(--primary);text-transform:uppercase;margin-bottom:0.5rem;">🥦 Produce</div>
+          {% for item in grocery_list.produce %}
+          <div class="grocery-item" onclick="this.classList.toggle('checked')">
+            <span class="g-check">☐</span> {{ item }}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          <div style="font-size:0.8rem;font-weight:700;color:var(--secondary);text-transform:uppercase;margin-bottom:0.5rem;">🥩 Protein</div>
+          {% for item in grocery_list.protein %}
+          <div class="grocery-item" onclick="this.classList.toggle('checked')">
+            <span class="g-check">☐</span> {{ item }}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          <div style="font-size:0.8rem;font-weight:700;color:var(--warning);text-transform:uppercase;margin-bottom:0.5rem;">🌾 Grains</div>
+          {% for item in grocery_list.grains %}
+          <div class="grocery-item" onclick="this.classList.toggle('checked')">
+            <span class="g-check">☐</span> {{ item }}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div>
+          <div style="font-size:0.8rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:0.5rem;">🫙 Pantry</div>
+          {% for item in grocery_list.pantry %}
+          <div class="grocery-item" onclick="this.classList.toggle('checked')">
+            <span class="g-check">☐</span> {{ item }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- MEAL PREP TIPS -->
+      <div class="card" style="background:linear-gradient(135deg,rgba(108,99,255,0.08),rgba(0,200,150,0.05));">
+        <div class="section-title mb-2">⚡ Meal Prep Tips</div>
+        <ul style="display:flex;flex-direction:column;gap:0.6rem;padding-left:1.25rem;font-size:0.85rem;color:var(--text-muted);">
+          <li>Batch cook grains (quinoa, brown rice) on Sunday for the whole week</li>
+          <li>Pre-wash and chop vegetables and store in containers</li>
+          <li>Marinate proteins the night before for better flavor</li>
+          <li>Prepare overnight oats for quick weekday breakfasts</li>
+          <li>Portion snacks into small bags to avoid overeating</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<style>
+.grocery-item {
+  padding: 8px 10px; border-radius: 8px; cursor: pointer;
+  font-size: 0.85rem; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+  border: 1px solid transparent;
+}
+.grocery-item:hover { background: rgba(255,255,255,0.04); }
+.grocery-item.checked { text-decoration: line-through; color: var(--text-muted); opacity: 0.6; }
+.grocery-item.checked .g-check::before { content: '✓'; color: var(--primary); }
+.g-check { color: var(--text-dim); font-size: 1rem; }
+</style>
+{% endblock %}

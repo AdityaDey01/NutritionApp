@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Meal Tracker{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+<div class="container">
+  <div class="page-header flex-between">
+    <div>
+      <h1 class="page-title">📝 Food <span class="text-gradient">Journal</span></h1>
+      <p class="page-desc">Log meals, track patterns, discover behavioral insights</p>
+    </div>
+    <button class="btn btn-primary" onclick="document.getElementById('logModal').classList.remove('hidden')" id="log-meal-btn">+ Log Meal</button>
+  </div>
+
+  <!-- WEEKLY INSIGHT BANNER -->
+  <div class="card card-glow mb-3 fade-up" style="background:linear-gradient(135deg,rgba(0,200,150,0.08),rgba(108,99,255,0.08));">
+    <div class="flex-between" style="flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div class="badge badge-green mb-1">📊 This Week</div>
+        <div class="section-title">Avg {{ insights.avg_calories }} kcal/day · Avg Score: {{ insights.avg_health_score }}/100</div>
+        <div style="color:var(--text-muted);font-size:0.85rem;">Best day: <strong>{{ insights.best_day }}</strong> · Trend: <span style="color:{% if insights.trend=='improving' %}var(--primary){% else %}var(--danger){% endif %};">{% if insights.trend=='improving' %}📈 Improving{% else %}📉 Needs Attention{% endif %}</span></div>
+      </div>
+      <div class="flex gap-2">
+        <div style="text-align:center;padding:0.75rem 1.25rem;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:1.4rem;font-weight:800;color:var(--secondary);">{{ insights.avg_protein }}g</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);">Avg Protein</div>
+        </div>
+        <div style="text-align:center;padding:0.75rem 1.25rem;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid var(--border);">
+          <div style="font-size:1.4rem;font-weight:800;color:#42C8FF;">{{ insights.avg_water }}</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);">Avg Water</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEKLY JOURNAL -->
+  <div class="section-title mb-2 fade-up">📅 7-Day Food Journal</div>
+  <div class="grid grid-auto fade-up-2">
+    {% for day in journal %}
+    <div class="card" style="border-{% if loop.last %}color:rgba(0,200,150,0.3);{% endif %}">
+      <div class="flex-between mb-2">
+        <div>
+          <div style="font-weight:700;font-size:0.95rem;">{{ day.weekday }}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">{{ day.date }}</div>
+        </div>
+        <div class="score-pill" style="background:{% if day.totals.health_score>=80 %}rgba(0,200,150,0.15){% elif day.totals.health_score>=60 %}rgba(255,217,61,0.15){% else %}rgba(255,107,107,0.15){% endif %};color:{% if day.totals.health_score>=80 %}var(--primary){% elif day.totals.health_score>=60 %}var(--warning){% else %}var(--danger){% endif %};">
+          {{ day.totals.health_score }}/100
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:0.82rem;">
+        <div style="display:flex;align-items:center;gap:8px;"><span>🌅</span><span style="color:var(--text-muted);">B:</span><span>{{ day.meals.breakfast.name }}</span></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span>☀️</span><span style="color:var(--text-muted);">L:</span><span>{{ day.meals.lunch.name }}</span></div>
+        <div style="display:flex;align-items:center;gap:8px;"><span>🌙</span><span style="color:var(--text-muted);">D:</span><span>{{ day.meals.dinner.name }}</span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="flex gap-2" style="font-size:0.78rem;color:var(--text-muted);">
+        <span>🔥 {{ day.totals.calories }} kcal</span>
+        <span>💪 {{ day.totals.protein }}g</span>
+        <span>💧 {{ day.totals.water_glasses }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- LOG MEAL SEARCH -->
+  <div class="card mt-3 fade-up-3">
+    <div class="section-title mb-2">🔍 Search & Log Food</div>
+    <div class="flex gap-2 mb-2">
+      <input type="text" id="foodSearch" class="form-control" placeholder="Search food database..." oninput="searchFood(this.value)" />
+    </div>
+    <div id="foodSearchResults" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+  </div>
+</div>
+</div>
+
+<!-- LOG MODAL -->
+<div id="logModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+  <div class="card" style="width:480px;max-width:95vw;max-height:80vh;overflow-y:auto;">
+    <div class="flex-between mb-3">
+      <div class="section-title">📝 Log a Meal</div>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('logModal').classList.add('hidden')" id="close-modal">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Meal Name</label>
+      <input type="text" id="logMealName" class="form-control" placeholder="e.g. Grilled Chicken Breast" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Meal Time</label>
+        <select id="logMealTime" class="form-control">
+          <option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Calories (approx)</label>
+        <input type="number" id="logCalories" class="form-control" placeholder="250" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Protein (g)</label>
+        <input type="number" id="logProtein" class="form-control" placeholder="20" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <input type="text" id="logNotes" class="form-control" placeholder="How was it?" />
+      </div>
+    </div>
+    <button class="btn btn-primary w-full" onclick="submitLog()" id="submit-log">✅ Log Meal</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+let searchTimer;
+function searchFood(q) {
+  clearTimeout(searchTimer);
+  if (!q) { document.getElementById('foodSearchResults').innerHTML=''; return; }
+  searchTimer = setTimeout(async () => {
+    const res = await fetch('/tracker/search_food?q=' + encodeURIComponent(q));
+    const data = await res.json();
+    document.getElementById('foodSearchResults').innerHTML = data.foods.map(f => `
+      <div class="habit-item" style="cursor:pointer;" onclick="quickLog(${JSON.stringify(f).replace(/"/g,'&quot;')})">
+        <div style="flex:1;">
+          <div class="habit-name">${f.name}</div>
+          <div class="habit-streak">${f.calories} kcal · ${f.protein}g protein · Score: ${f.health_score}</div>
+        </div>
+        <button class="btn btn-primary btn-sm">+ Log</button>
+      </div>`).join('');
+  }, 300);
+}
+function quickLog(food) {
+  fetch('/tracker/log', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({meal:food})})
+    .then(r=>r.json()).then(d=>showToast(d.message,'success'));
+}
+function submitLog() {
+  const name = document.getElementById('logMealName').value;
+  if (!name) return showToast('Enter a meal name','error');
+  showToast(`✅ ${name} logged successfully!`, 'success');
+  document.getElementById('logModal').classList.add('hidden');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>{% block title %}NutriSmart AI{% endblock %} — Intelligent Food & Health Assistant</title>
+  <meta name="description" content="{% block meta_desc %}AI-powered nutrition guidance, meal tracking, and personalized health coaching{% endblock %}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>"/>
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <div class="logo-icon">🥗</div>
+    <span>NutriSmart</span><span style="color:var(--text);-webkit-text-fill-color:var(--text);"> AI</span>
+  </a>
+  <div class="nav-links">
+    <a href="/dashboard" id="nav-dashboard" class="{% if request.path.startswith('/dashboard') %}active{% endif %}">📊 Dashboard</a>
+    <a href="/recommender" id="nav-recommender" class="{% if request.path.startswith('/recommender') %}active{% endif %}">🤖 AI Recommender</a>
+    <a href="/tracker" id="nav-tracker" class="{% if request.path.startswith('/tracker') %}active{% endif %}">📝 Meal Tracker</a>
+    <a href="/habits" id="nav-habits" class="{% if request.path.startswith('/habits') %}active{% endif %}">🏆 Habits</a>
+    <a href="/grocery" id="nav-grocery" class="{% if request.path.startswith('/grocery') %}active{% endif %}">🛒 Grocery</a>
+    <a href="/insights" id="nav-insights" class="{% if request.path.startswith('/insights') %}active{% endif %}">💡 Insights</a>
+    <a href="/coach" id="nav-coach" class="nav-cta {% if request.path.startswith('/coach') %}active{% endif %}">🧠 AI Coach</a>
+  </div>
+  <a href="/profile" id="nav-profile" style="font-size:1.5rem;text-decoration:none;border-radius:50%;width:40px;height:40px;background:var(--bg-card2);display:flex;align-items:center;justify-content:center;border:2px solid var(--border);" title="Profile">😊</a>
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
+
+{% block content %}{% endblock %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

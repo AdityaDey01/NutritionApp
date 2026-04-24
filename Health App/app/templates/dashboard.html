@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="page-header flex-between">
+    <div>
+      <div class="badge badge-green mb-1">{{ greeting }}, {{ user.name.split()[0] }}! 👋</div>
+      <h1 class="page-title">Your Health <span class="text-gradient">Dashboard</span></h1>
+      <p class="page-desc">{{ meal_time.title() }} insights · Streak: 🔥 {{ streak }} days · Level {{ level }}</p>
+    </div>
+    <div style="display:flex;gap:1rem;align-items:center;">
+      <div class="card card-sm" style="text-align:center;min-width:100px;">
+        <div style="font-size:1.5rem;">⭐</div>
+        <div style="font-size:1.2rem;font-weight:800;color:var(--warning);">{{ points }}</div>
+        <div style="font-size:0.7rem;color:var(--text-muted);">Points</div>
+      </div>
+      <a href="/coach" class="btn btn-primary" id="dash-coach-btn">🧠 AI Coach</a>
+    </div>
+  </div>
+
+  <!-- TOP STATS -->
+  <div class="grid grid-4 mb-3 fade-up">
+    <div class="card stat-card card-glow">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-label">Calories Consumed</div>
+      <div class="stat-value text-gradient">{{ today.calories_consumed }}</div>
+      <div class="stat-sub">{{ today.calories_remaining }} remaining of {{ user.daily_calorie_target }}</div>
+      <div class="progress-wrap mt-1">
+        <div class="progress-bar"><div class="progress-fill {% if today.calories_consumed/user.daily_calorie_target > 0.9 %}warning{% endif %}" style="width:{{ [(today.calories_consumed/user.daily_calorie_target*100)|int, 100]|min }}%"></div></div>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon">💪</div>
+      <div class="stat-label">Protein</div>
+      <div class="stat-value" style="color:var(--secondary);">{{ today.protein_g }}g</div>
+      <div class="stat-sub">Goal: {{ user.protein_target_g }}g</div>
+      <div class="progress-wrap mt-1">
+        <div class="progress-bar"><div class="progress-fill" style="width:{{ [(today.protein_g/user.protein_target_g*100)|int,100]|min }}%;background:linear-gradient(90deg,var(--secondary),#9C7FFF)"></div></div>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon">💧</div>
+      <div class="stat-label">Water Intake</div>
+      <div class="stat-value" style="color:#42C8FF;">{{ today.water_glasses }}</div>
+      <div class="stat-sub">glasses · Target: 8</div>
+      <div class="flex gap-1 mt-1" style="flex-wrap:wrap;">
+        {% for i in range(8) %}<span style="font-size:1rem;opacity:{% if i < today.water_glasses %}1{% else %}0.25{% endif %};">💧</span>{% endfor %}
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon">🌿</div>
+      <div class="stat-label">Fiber</div>
+      <div class="stat-value" style="color:var(--primary);">{{ today.fiber_g }}g</div>
+      <div class="stat-sub">Goal: {{ user.fiber_target_g }}g</div>
+      <div class="progress-wrap mt-1">
+        <div class="progress-bar"><div class="progress-fill" style="width:{{ [(today.fiber_g/user.fiber_target_g*100)|int,100]|min }}%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTH SCORE + HABITS -->
+  <div class="grid grid-2 mb-3 fade-up-2">
+    <!-- Health Score -->
+    <div class="card">
+      <div class="section-header">
+        <div><div class="section-title">Health Score</div><div class="section-sub">Today's overall wellness rating</div></div>
+        <span class="badge badge-green">AI Calculated</span>
+      </div>
+      <div class="score-ring-wrap" style="flex-direction:row;gap:2rem;align-items:center;justify-content:center;padding:1rem 0;">
+        <div class="score-ring">
+          <svg viewBox="0 0 120 120" width="120" height="120">
+            <circle class="bg" cx="60" cy="60" r="50" />
+            <circle class="fill" cx="60" cy="60" r="50"
+              stroke-dasharray="314"
+              stroke-dashoffset="{{ 314 - (today.health_score / 100 * 314)|int }}"
+              style="stroke:var(--primary);" />
+          </svg>
+          <div class="score-ring-text">
+            <div class="score-num text-gradient">{{ today.health_score }}</div>
+            <div class="score-grade">/ 100</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:1.5rem;font-weight:800;margin-bottom:0.5rem;">
+            {% if today.health_score >= 80 %}🌟 Excellent!{% elif today.health_score >= 65 %}👍 Good{% elif today.health_score >= 50 %}⚡ Fair{% else %}💪 Keep Going{% endif %}
+          </div>
+          <div style="color:var(--text-muted);font-size:0.85rem;max-width:220px;">
+            {% if today.health_score >= 80 %}You're crushing your health goals today! Keep it up.{% elif today.health_score >= 65 %}Good progress! A bit more fiber and water will boost your score.{% else %}Focus on whole foods and hydration to improve today.{% endif %}
+          </div>
+          <div class="mt-2">
+            <div class="badge badge-green">🔥 {{ streak }}-day streak</div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="grid grid-3" style="text-align:center;gap:0.75rem;">
+        <div><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">Badges</div><div style="font-size:1.2rem;">{{ badges|length }}</div></div>
+        <div><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">Level</div><div style="font-size:1.2rem;font-weight:800;">Lv.{{ level }}</div></div>
+        <div><div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;">Points</div><div style="font-size:1.2rem;font-weight:800;color:var(--warning);">{{ points }}</div></div>
+      </div>
+    </div>
+
+    <!-- Today's Habits -->
+    <div class="card">
+      <div class="section-header">
+        <div><div class="section-title">Today's Habits</div><div class="section-sub">Tap to mark complete</div></div>
+        <span class="badge badge-purple">{{ habits|selectattr('completed_today')|list|length }}/{{ habits|length }}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;" id="habitsContainer">
+        {% for h in habits[:5] %}
+        <div class="habit-item {% if h.completed_today %}done{% endif %}" data-habit-id="{{ h.id }}" onclick="toggleHabit(this)">
+          <div class="habit-icon">{{ h.icon }}</div>
+          <div class="habit-info">
+            <div class="habit-name">{{ h.name }}</div>
+            <div class="habit-streak">🔥 {{ h.streak }}-day streak</div>
+          </div>
+          <div class="habit-check {% if h.completed_today %}done{% endif %}">{% if h.completed_today %}✓{% endif %}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <a href="/habits" class="btn btn-ghost btn-sm w-full mt-2" id="dash-habits-link" style="justify-content:center;">View All Habits →</a>
+    </div>
+  </div>
+
+  <!-- ACTIVE CHALLENGES + LEADERBOARD -->
+  <div class="grid grid-2 fade-up-3">
+    <div class="card">
+      <div class="section-header">
+        <div><div class="section-title">🏆 Active Challenges</div></div>
+        <a href="/habits" class="btn btn-ghost btn-sm" id="dash-challenges-link">See All</a>
+      </div>
+      {% for ch in challenges %}
+      <div class="challenge-card mb-2">
+        <div class="ch-header">
+          <div class="ch-icon">{{ ch.icon }}</div>
+          <div>
+            <div class="ch-title">{{ ch.name }}</div>
+            <div class="ch-desc">{{ ch.description }}</div>
+          </div>
+          <span class="badge badge-yellow">+{{ ch.points }}pts</span>
+        </div>
+        <div class="progress-label"><span>Progress</span><span>{{ ch.progress }}/{{ ch.target }}</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:{{ (ch.progress/ch.target*100)|int }}%"></div></div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div><div class="section-title">🥇 Leaderboard</div><div class="section-sub">Weekly rankings</div></div>
+      </div>
+      {% for entry in leaderboard %}
+      <div class="lb-item {% if entry.name == 'Alex J. (You)' %}me{% endif %}">
+        <div class="lb-rank">{{ entry.rank }}</div>
+        <div class="lb-avatar">{{ entry.avatar }}</div>
+        <div class="lb-name">{{ entry.name }}</div>
+        <div>
+          <div class="lb-pts">{{ entry.points }} pts</div>
+          <div class="lb-streak">🔥 {{ entry.streak }} days</div>
+        </div>
+        {% if entry.badge %}<span style="font-size:1.2rem;">{{ entry.badge }}</span>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="card mt-3 fade-up">
+    <div class="section-title mb-2">⚡ Quick Actions</div>
+    <div class="flex gap-2" style="flex-wrap:wrap;">
+      <a href="/recommender" class="btn btn-primary" id="qa-recommender">🤖 Get AI Recommendation</a>
+      <a href="/tracker" class="btn btn-secondary" id="qa-tracker">📝 Log a Meal</a>
+      <a href="/grocery" class="btn btn-ghost" id="qa-grocery">🛒 View Meal Plan</a>
+      <a href="/insights" class="btn btn-ghost" id="qa-insights">💡 Weekly Insights</a>
+      <button class="btn btn-ghost" onclick="addWater()" id="qa-water">💧 +1 Water Glass</button>
+    </div>
+  </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleHabit(el) {
+  const id = el.dataset.habitId;
+  el.classList.toggle('done');
+  const check = el.querySelector('.habit-check');
+  check.classList.toggle('done');
+  check.textContent = check.classList.contains('done') ? '✓' : '';
+  if (check.classList.contains('done')) {
+    fetch('/habits/complete', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({habit_id:id})})
+      .then(r=>r.json()).then(d=>showToast(d.message,'success'));
+  }
+}
+function addWater() { showToast('💧 Water glass logged! Stay hydrated!','success'); }
+// Animate score ring on load
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.progress-fill').forEach(el => {
+    const w = el.style.width; el.style.width='0'; setTimeout(()=>{el.style.width=w;},100);
+  });
+});
+</script>
+{% endblock %}

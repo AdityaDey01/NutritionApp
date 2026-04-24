@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+<div class="container" style="max-width:860px;">
+  <div class="page-header">
+    <h1 class="page-title">😊 Your <span class="text-gradient">Profile</span></h1>
+    <p class="page-desc">Personalization settings, health goals, and preferences</p>
+  </div>
+
+  <!-- PROFILE HERO -->
+  <div class="card card-glow mb-3 fade-up" style="background:linear-gradient(135deg,rgba(0,200,150,0.08),rgba(108,99,255,0.08));">
+    <div class="flex gap-3" style="align-items:center;flex-wrap:wrap;">
+      <div style="width:80px;height:80px;border-radius:50%;background:var(--gradient-main);display:flex;align-items:center;justify-content:center;font-size:2.5rem;flex-shrink:0;">😊</div>
+      <div style="flex:1;">
+        <div style="font-size:1.5rem;font-weight:800;font-family:'Outfit',sans-serif;">{{ user.name }}</div>
+        <div style="color:var(--text-muted);font-size:0.9rem;margin-top:4px;">Level {{ user.level }} · {{ user.streak_days }}-day streak · {{ user.points }} points</div>
+        <div class="flex gap-1 mt-2" style="flex-wrap:wrap;">
+          {% for badge in user.badges %}
+          <span class="badge badge-green">🎖️ {{ badge }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <div style="text-align:center;padding:0.75rem 1rem;background:rgba(0,0,0,0.2);border-radius:10px;">
+          <div style="font-size:1.3rem;font-weight:800;color:var(--warning);">🔥 {{ user.streak_days }}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);">Day Streak</div>
+        </div>
+        <div style="text-align:center;padding:0.75rem 1rem;background:rgba(0,0,0,0.2);border-radius:10px;">
+          <div style="font-size:1.3rem;font-weight:800;color:var(--primary);">Lv.{{ user.level }}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);">Level</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY STATS -->
+  <div class="grid grid-4 mb-3 fade-up-2">
+    <div class="card stat-card"><div class="stat-label">Age</div><div class="stat-value">{{ user.age }}</div><div class="stat-sub">years</div></div>
+    <div class="card stat-card"><div class="stat-label">Weight</div><div class="stat-value text-gradient">{{ user.weight_kg }}kg</div><div class="stat-sub">Goal: {{ user.goal_weight_kg }}kg</div></div>
+    <div class="card stat-card"><div class="stat-label">Height</div><div class="stat-value">{{ user.height_cm }}cm</div><div class="stat-sub">{{ "%.1f"|format(user.height_cm/100) }}m</div></div>
+    <div class="card stat-card"><div class="stat-label">BMI</div><div class="stat-value">{{ "%.1f"|format(user.weight_kg / ((user.height_cm/100)**2)) }}</div><div class="stat-sub">Healthy range</div></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="grid grid-2 fade-up-3">
+    <div class="card">
+      <div class="section-title mb-3">🎯 Health Settings</div>
+      <div class="form-group">
+        <label class="form-label">Health Goal</label>
+        <select class="form-control" id="pref-goal">
+          <option {% if user.health_goal=='weight_loss' %}selected{% endif %}>weight_loss</option>
+          <option {% if user.health_goal=='muscle_gain' %}selected{% endif %}>muscle_gain</option>
+          <option {% if user.health_goal=='balanced' %}selected{% endif %}>balanced</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Diet Preference</label>
+        <select class="form-control" id="pref-diet">
+          <option {% if user.diet_preference=='balanced' %}selected{% endif %}>balanced</option>
+          <option {% if user.diet_preference=='vegan' %}selected{% endif %}>vegan</option>
+          <option {% if user.diet_preference=='keto' %}selected{% endif %}>keto</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Daily Calorie Target</label>
+        <input type="number" class="form-control" value="{{ user.daily_calorie_target }}" id="pref-calories"/>
+      </div>
+      <button class="btn btn-primary w-full" onclick="showToast('✅ Settings saved!','success')" id="save-settings">Save Settings</button>
+    </div>
+    <div class="card">
+      <div class="section-title mb-3">📊 Nutrition Targets</div>
+      <div class="form-group">
+        <label class="form-label">Protein Target (g/day)</label>
+        <input type="number" class="form-control" value="{{ user.protein_target_g }}" id="pref-protein"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Water Target (ml)</label>
+        <input type="number" class="form-control" value="{{ user.water_target_ml }}" id="pref-water"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fiber Target (g/day)</label>
+        <input type="number" class="form-control" value="{{ user.fiber_target_g }}" id="pref-fiber"/>
+      </div>
+      <div class="section-title mt-2 mb-2" style="font-size:0.95rem;">🚫 Allergies</div>
+      <div class="tags">{% for a in user.allergies %}<span class="badge badge-red">{{ a }}</span>{% endfor %}</div>
+    </div>
+  </div>
+
+  <!-- FUTURE FEATURES -->
+  <div class="card mt-3 fade-up" style="border-color:rgba(108,99,255,0.2);">
+    <div class="section-title mb-2">🚀 Future Roadmap</div>
+    <div class="grid grid-3" style="gap:1rem;">
+      <div style="padding:1rem;border-radius:10px;border:1px dashed var(--border);text-align:center;opacity:0.7;">
+        <div style="font-size:1.5rem;">📷</div><div style="font-size:0.85rem;font-weight:600;margin-top:0.5rem;">Computer Vision</div><div style="font-size:0.75rem;color:var(--text-muted);">Photo meal analysis</div>
+      </div>
+      <div style="padding:1rem;border-radius:10px;border:1px dashed var(--border);text-align:center;opacity:0.7;">
+        <div style="font-size:1.5rem;">🎙️</div><div style="font-size:0.85rem;font-weight:600;margin-top:0.5rem;">Voice Coach</div><div style="font-size:0.75rem;color:var(--text-muted);">Hands-free coaching</div>
+      </div>
+      <div style="padding:1rem;border-radius:10px;border:1px dashed var(--border);text-align:center;opacity:0.7;">
+        <div style="font-size:1.5rem;">⌚</div><div style="font-size:0.85rem;font-weight:600;margin-top:0.5rem;">Wearable Sync</div><div style="font-size:0.75rem;color:var(--text-muted);">Fitbit, Apple Watch</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+{% endblock %}
